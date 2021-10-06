@@ -34,7 +34,7 @@ class Librarian(models.Model):
 
 
 class BorrowedBook(models.Model):
-    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, related_name="borrowed_books", on_delete=models.CASCADE)
     borrower = models.ForeignKey(Student, on_delete=models.CASCADE)
     issuer = models.ForeignKey(Librarian, on_delete=models.CASCADE)
     status = models.CharField(max_length=16, choices=BORROWED_BOOK_STATUS_CHOICES, default="requested")
