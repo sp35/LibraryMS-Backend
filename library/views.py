@@ -83,38 +83,34 @@ class BookIssueAPI(APIView):
     permission_classes = (IsAuthenticated, IsLibrarian)
     
     def post(self, request):
-        qs = BorrowedBook.objects.filter(static_id=self.request.query_params.get("static_id"))
+        qs = BorrowedBook.objects.filter(static_id=self.request.query_params.get("static_id"), status="requested")
         if qs.exists():
             status = request.data.get("status", None)
-            print(status)
             if status == "issued" or status == "denied":
                 # checks
                 instance = qs[0]
-                if instance.status == "issued":
-                    return Response({"message": "Book already issued", "status": 0})
                 instance.status = status
                 instance.issuer = Librarian.objects.get(auth_user=request.user)
                 instance.save()
             else:
                 raise ValidationError("Invalid `status` for book issue")
             return Response({"message": "Issue request updated", "status": 1})
+        else:
+            return Response({"message": "No such book requested", "status": 0})
 
 
 class BookReturnAPI(APIView):
     permission_classes = (IsAuthenticated, IsStudent)
     
     def post(self, request):
-        qs = BorrowedBook.objects.filter(static_id=self.request.query_params.get("static_id"))
+        qs = BorrowedBook.objects.filter(static_id=self.request.query_params.get("static_id"), status="issued")
         if qs.exists():
-            status = request.data.get("status", None)
-            print(status)
-            if status == "returned":
-                # checks
-                instance = qs[0]
-                if instance.status == "returned":
-                    return Response({"message": "Book already returned", "status": 0})
-                instance.status = status
-                instance.save()
-            else:
-                raise ValidationError("Invalid `status` for book return")
+            # checks
+            instance = qs[0]
+            if instance.status == "returned":
+                return Response({"message": "Book already returned", "status": 0})
+            instance.status = "returned"
+            instance.save()
             return Response({"message": "Book return success", "status": 1})
+        else:
+            return Response({"message": "No such book issued", "status": 0})
