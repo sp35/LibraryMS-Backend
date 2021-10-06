@@ -15,6 +15,8 @@
 <pre>python manage.py migrate</pre>
 <h3>Create a superuser</h3>
 <pre>python manage.py createsuperuser</pre>
+<h3>Add dummy data (optional)</h3>
+<pre>cd utils && python library_populate.py</pre>
 <h3>Run the server</h3>
 <pre>python manage.py runserver</pre>
 <h3>Now open up your browser at http://localhost:8000/ and the API is

@@ -22,6 +22,8 @@ for _ in range(50):
     user, _ = User.objects.get_or_create(
         username=profile["username"]
     )
+    user.set_password(profile["username"])
+    user.save()
     Student.objects.get_or_create(
         auth_user=user
     )
@@ -32,6 +34,8 @@ for _ in range(2):
     user, _ = User.objects.get_or_create(
         username=profile["username"]
     )
+    user.set_password(profile["username"])
+    user.save()
     Librarian.objects.get_or_create(
         auth_user=user
     )
